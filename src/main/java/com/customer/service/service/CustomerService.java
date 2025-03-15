@@ -15,6 +15,9 @@ public class CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    
+    @Autowired
+    KafkaProducerService kafkaProducerService;
 
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
@@ -25,7 +28,12 @@ public class CustomerService {
     }
 
     public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
+    	
+    	customer  =	customerRepository.save(customer);
+    	
+    	  kafkaProducerService.sendCustomer(customer);
+    	
+        return customer;
     }
 
     public Customer updateCustomer(Long id, Customer customerDetails) {
